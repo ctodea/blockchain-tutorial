@@ -8,13 +8,22 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
+	"strconv"
 	"time"
 
+	"github.com/BurntSushi/toml"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 )
+
+type tomlConfig struct {
+	Webserver serverConf
+}
+
+type serverConf struct {
+	Address string
+	Port    int
+}
 
 type Block struct {
 	Index     int
@@ -125,11 +134,15 @@ func respondWithJSON(w http.ResponseWriter, r *http.Request, code int,
 }
 
 func run() error {
+	var conf tomlConfig
+	if _, err := toml.DecodeFile("../config/config.toml", &conf); err != nil {
+		log.Fatal(err)
+	}
 	mux := makeMuxRouter()
-	httpAddr := os.Getenv("ADDR")
+	httpAddr := conf.Webserver.Address + ":" + strconv.Itoa(conf.Webserver.Port)
 	log.Println("Listening on ", httpAddr)
 	s := &http.Server{
-		Addr:              ":" + httpAddr,
+		Addr:              httpAddr,
 		Handler:           mux,
 		ReadHeaderTimeout: 10 * time.Second,
 		WriteTimeout:      10 * time.Second,
@@ -144,9 +157,10 @@ func run() error {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
+	var conf tomlConfig
+	if _, err := toml.DecodeFile("../config/config.toml", &conf); err != nil {
 		log.Fatal(err)
+		return
 	}
 	go func() {
 		genesisBlock := Block{0, time.Now().String(), 0, "", ""}
