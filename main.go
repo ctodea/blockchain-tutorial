@@ -18,11 +18,11 @@ import (
 
 var confFile = "config/config.toml"
 
-type tomlConfig struct {
-	Webserver serverConf
+type TomlConfig struct {
+	Webserver ServerConf
 }
 
-type serverConf struct {
+type ServerConf struct {
 	Address string
 	Port    int
 }
@@ -136,7 +136,7 @@ func respondWithJSON(w http.ResponseWriter, r *http.Request, code int,
 }
 
 func run() error {
-	var conf tomlConfig
+	var conf TomlConfig
 	if _, err := toml.DecodeFile(confFile, &conf); err != nil {
 		log.Fatal(err)
 	}
@@ -159,7 +159,7 @@ func run() error {
 }
 
 func main() {
-	var conf tomlConfig
+	var conf TomlConfig
 	if _, err := toml.DecodeFile(confFile, &conf); err != nil {
 		log.Fatal(err)
 		return
