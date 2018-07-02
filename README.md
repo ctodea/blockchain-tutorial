@@ -1,13 +1,14 @@
 # rajols
 Simple blockchain in Go, for learning purposes. Forked from mycoralhealth/blockchain-tutorial
 
+
+Dependencies managed with [dep](https://github.com/golang/dep):
 ```
-go get github.com/davecgh/go-spew/spew
-go get github.com/gorilla/mux
-go get github.com/joho/godotenv
+dep ensure
 ```
 
+`ADDR` and `PORT` defined in `config/config.toml`
 Add new block using cURL:
 ```
-curl -d '{"BPM":75}' -H "Content-Type: application/json" -XPOST http://localhost:$PORT
+curl -d '{"BPM":75}' -H "Content-Type: application/json" -XPOST http://$ADDR:$PORT
 ```
